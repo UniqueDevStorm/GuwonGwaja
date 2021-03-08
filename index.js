@@ -1,8 +1,17 @@
 const app = require('express')();
 const port = 3000;
 
+const KEY = process.env.API_KEY;
+const REDIRECT_URI = {
+    Kakao : 'http://localhost:3000/api/oauth2/kakao/callback'
+}
+
 app.get('/api/oauth2/kakao', (req, res) => {
-    res.send('샌즈지 뭐 아 ㅋㅋ')
+    res.redirect(`https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KEY}&redirect_uri=${REDIRECT_URI.Kakao}`)
+})
+
+app.get('/api/oauth2/kakao/callback', (req, res) => {
+    res.send(req.query.code)
 })
 
 app.listen(port, () => {
