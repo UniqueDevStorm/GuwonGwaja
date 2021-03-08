@@ -1,16 +1,18 @@
 const app = require('express')();
 const fetch = require('node-fetch');
 const port = 3000;
+require('dotenv').config();
 
-const KEY = process.env.API_KEY;
+const LOCAL_BASE_URI = process.env.HOST
+
 const API_BASE_URI = {
     Kakao : 'https://kauth.kakao.com',
     Google : 'https://accounts.google.com/o'
 }
 
 const REDIRECT_URI = {
-    Kakao : 'http://localhost:3000/api/oauth2/kakao/callback',
-    Google : 'http://localhost:3000/api/oauth2/google/callback'
+    Kakao : `${LOCAL_BASE_URI}/api/oauth2/kakao/callback`,
+    Google : `${LOCAL_BASE_URI}/api/oauth2/google/callback`
 }
 
 const API_KEY = {
@@ -22,14 +24,14 @@ const API_KEY = {
 }
 
 app.get('/api/oauth2/kakao', (req, res) => {
-    res.redirect(`${API_BASE_URI.Kakao}/oauth/authorize?client_id=${KEY}&redirect_uri=${REDIRECT_URI.Kakao}&response_type=code&scope=profile,account_email`)
+    res.redirect(`${API_BASE_URI.Kakao}/oauth/authorize?client_id=${API_KEY.Kakao}&redirect_uri=${REDIRECT_URI.Kakao}&response_type=code&scope=profile,account_email`)
 })
 
 app.get('/api/oauth2/kakao/callback', async (req, res) => {
     const code = req.query.code;
     const params = new URLSearchParams({
         grant_type: 'authorization_code',
-        client_id: process.env.API_KEY,
+        client_id: API_KEY.Kakao,
         redirect_uri: REDIRECT_URI.Kakao,
         code: code
     })
